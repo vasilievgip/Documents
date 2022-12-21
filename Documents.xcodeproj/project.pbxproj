@@ -17,7 +17,7 @@
 		5E7719DB2951AE560047D048 /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7719D82951AE560047D048 /* FirstViewController.swift */; };
 		5E7719DF2951AE840047D048 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7719DE2951AE840047D048 /* Extension.swift */; };
 		5E7719E12951B03F0047D048 /* SecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7719E02951B03F0047D048 /* SecondViewController.swift */; };
-		5E7719E32951B38B0047D048 /* FileFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7719E22951B38B0047D048 /* FileFolder.swift */; };
+		5EEF6B712953434700DF0E3C /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EEF6B702953434700DF0E3C /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +33,7 @@
 		5E7719D82951AE560047D048 /* FirstViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
 		5E7719DE2951AE840047D048 /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		5E7719E02951B03F0047D048 /* SecondViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecondViewController.swift; sourceTree = "<group>"; };
-		5E7719E22951B38B0047D048 /* FileFolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileFolder.swift; sourceTree = "<group>"; };
+		5EEF6B702953434700DF0E3C /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +72,7 @@
 				5E7719CF2951AE170047D048 /* MainTabBarController.swift */,
 				5E7719D62951AE560047D048 /* FirstViewCell.swift */,
 				5E7719D82951AE560047D048 /* FirstViewController.swift */,
-				5E7719E22951B38B0047D048 /* FileFolder.swift */,
+				5EEF6B702953434700DF0E3C /* DetailViewController.swift */,
 				5E7719E02951B03F0047D048 /* SecondViewController.swift */,
 				5E7719B029519B720047D048 /* AppDelegate.swift */,
 				5E7719DE2951AE840047D048 /* Extension.swift */,
@@ -153,12 +153,12 @@
 			files = (
 				5E7719D52951AE170047D048 /* MainSecondCoordinator.swift in Sources */,
 				5E7719D42951AE170047D048 /* AppCoordinator.swift in Sources */,
-				5E7719E32951B38B0047D048 /* FileFolder.swift in Sources */,
 				5E7719E12951B03F0047D048 /* SecondViewController.swift in Sources */,
 				5E7719D92951AE560047D048 /* FirstViewCell.swift in Sources */,
 				5E7719B129519B720047D048 /* AppDelegate.swift in Sources */,
 				5E7719DF2951AE840047D048 /* Extension.swift in Sources */,
 				5E7719D22951AE170047D048 /* MainFirstCoordinator.swift in Sources */,
+				5EEF6B712953434700DF0E3C /* DetailViewController.swift in Sources */,
 				5E7719DB2951AE560047D048 /* FirstViewController.swift in Sources */,
 				5E7719D32951AE170047D048 /* MainTabBarController.swift in Sources */,
 			);

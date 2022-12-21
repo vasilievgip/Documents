@@ -23,7 +23,7 @@ final class MainSecondCoordinator: AppCoordinator {
         vc.coordinator = self
         navigationController.pushViewController(vc, animated: true)
     }
-
+    
     func childDidFinish(_ child: AppCoordinator?) {
         for (index, appcoordinator) in childs.enumerated() {
             if appcoordinator === child {
