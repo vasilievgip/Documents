@@ -11,6 +11,6 @@ import UIKit
 protocol AppCoordinator: AnyObject {
     var childs: [AppCoordinator] {get set}
     var navigationController: UINavigationController {get set}
-    
+
     func start()
 }

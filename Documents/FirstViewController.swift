@@ -11,6 +11,12 @@ class FirstViewController: UIViewController, UITableViewDelegate {
 
     weak var coordinator: MainFirstCoordinator?
 
+    var path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+
+    var files : [String] {
+        (try? FileManager.default.contentsOfDirectory(atPath: path)) ?? []
+    }
+
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.toAutoLayout()
@@ -83,7 +89,7 @@ class FirstViewController: UIViewController, UITableViewDelegate {
             textField.placeholder = "Enter text"
         }
         alert.addAction(UIAlertAction(title: "Создать", style: .default, handler: { action in
-            let newDirectoryPath = FileFolder.fileFolder.path + "/" + (alert.textFields?[0].text)!.uppercased()
+            let newDirectoryPath = self.path + "/" + (alert.textFields?[0].text)!.uppercased()
             try? FileManager.default.createDirectory(atPath: newDirectoryPath, withIntermediateDirectories: false)
             self.tableView.reloadData()
             print("создать папку")
@@ -106,23 +112,41 @@ extension FirstViewController: UITableViewDataSource, UIImagePickerControllerDel
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        FileFolder().files.count
+        self.files.count
 
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: FirstViewCell.self), for: indexPath) as! FirstViewCell
-        cell.setupCell(model: FileFolder.fileFolder.files[indexPath.row])
+        cell.setupCell(model: self.files[indexPath.row])
         return cell
 
     }
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let fullPath = FileFolder.fileFolder.path + "/" + FileFolder.fileFolder.files[indexPath.row]
+            let fullPath = self.path + "/" + self.files[indexPath.row]
             try? FileManager.default.removeItem(atPath: fullPath)
             tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let fullPath = self.path + "/" + self.files[indexPath.row]
+        var isDir: ObjCBool = false
+        if FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDir) {
+            if isDir.boolValue == true {
+                let tvc = FirstViewController()
+                tvc.path = fullPath
+                navigationController?.pushViewController(tvc, animated: true)
+                navigationController?.navigationBar.isHidden = false
+            } else {
+                let dvc = DetailViewController()
+                dvc.imageView.image = UIImage(named: fullPath)
+                navigationController?.pushViewController(dvc, animated: true)
+                navigationController?.navigationBar.isHidden = false
+            }
         }
     }
 
@@ -130,28 +154,43 @@ extension FirstViewController: UITableViewDataSource, UIImagePickerControllerDel
 
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
+
         present(imagePickerController, animated: true)
 
     }
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
 
-        if let imgUrl = info[UIImagePickerController.InfoKey.imageURL] as? URL{
-            let imgName = imgUrl.lastPathComponent
-            let documentDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
-            let localPath = documentDirectory?.appending(imgName)
+        if let imgUrl = info[UIImagePickerController.InfoKey.imageURL] as? URL {
+//            dismiss(animated: true)
+            var imgName = imgUrl.lastPathComponent
 
-            let image = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
-            let data = image.pngData()! as NSData
-            data.write(toFile: localPath!, atomically: true)
-            //let imageData = NSData(contentsOfFile: localPath!)!
-            let photoURL = URL.init(fileURLWithPath: localPath!)//NSURL(fileURLWithPath: localPath!)
-            print(photoURL)
-
-            let  urlDestination = URL(filePath: FileFolder.fileFolder.path + "/" + imgName)
-            try? FileManager.default.copyItem(at: photoURL, to: urlDestination)
-            self.tableView.reloadData()
+            let alert = UIAlertController(title: "Введите название файла", message: "", preferredStyle: .alert)
+            alert.addTextField { textField in
+                textField.placeholder = "Enter text"
+            }
+            alert.addAction(UIAlertAction(title: "Создать", style: .default, handler: { action in
+                let fileType = imgName.components(separatedBy: ".")
+                imgName = (alert.textFields?[0].text)! + "." + fileType[1]
+                let  urlDestination = URL(filePath: (self.path + "/" + imgName))
+                try? FileManager.default.copyItem(at: imgUrl, to: urlDestination)
+                self.tableView.reloadData()
+            }))
+            alert.addAction(UIAlertAction(title: "По умолчанию", style: .default, handler: { action in
+                let  urlDestination = URL(filePath: (self.path + "/" + imgName))
+                try? FileManager.default.copyItem(at: imgUrl, to: urlDestination)
+                self.tableView.reloadData()
+            }))
             dismiss(animated: true)
+            present(alert, animated: true)
+            //            let documentDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+            //            let localPath = documentDirectory?.appending(imgName)
+            //            let image = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
+            //            let data = image.pngData()! as NSData
+            //            data.write(toFile: localPath!, atomically: true)
+            //            let imageData = NSData(contentsOfFile: localPath!)!
+            //            let photoURL = URL.init(fileURLWithPath: localPath!)//NSURL(fileURLWithPath: localPath!)
+
         }
 
     }
