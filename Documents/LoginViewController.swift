@@ -9,7 +9,7 @@ import UIKit
 import KeychainSwift
 
 class LoginViewController: UIViewController {
-
+    
     private let passwordtextField: UITextField = {
         let field = UITextField()
         field.backgroundColor = .systemGray6
@@ -26,16 +26,16 @@ class LoginViewController: UIViewController {
         field.toAutoLayout()
         return field
     }()
-
+    
     private let passwordButton = CustomButton(title: "",
                                               titleColor: .white,
                                               backgroundColor: .systemBlue,
                                               cornerRadius: 10)
-
+    
     private func layout() {
         view.addSubviews(passwordtextField, passwordButton)
         NSLayoutConstraint.activate([
-
+            
             passwordtextField.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -25),
             passwordtextField.heightAnchor.constraint(equalToConstant: 50),
             passwordtextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -44,31 +44,30 @@ class LoginViewController: UIViewController {
             passwordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             passwordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             passwordButton.heightAnchor.constraint(equalToConstant: 50)
-
+            
         ])
     }
-
+    
     func screenStatus() {
-
+        
         if KeychainSwift().allKeys.count == 0 {
             self.passwordButton.setTitle("Создать пароль", for: .normal)
         } else {
             self.passwordButton.setTitle("Введите пароль", for: .normal)
         }
-
+        
     }
-
+    
     override func viewDidLoad() {
-
+        
         super.viewDidLoad()
         view.backgroundColor = .systemGray4
         layout()
-        KeychainSwift().clear()
         screenStatus()
         passwordButton.target = {self.tap()}
-
+        
     }
-
+    
     @objc
     func tap() {
         let text = passwordtextField.text!
@@ -77,14 +76,11 @@ class LoginViewController: UIViewController {
             characterText.append(character)
         }
         if passwordButton.currentTitle == "Создать пароль" {
+            
             if characterText.count > 3 {
                 KeychainSwift().set(passwordtextField.text!, forKey: "userPassword")
-                let alert = UIAlertController(title: "Пароль сохранен!", message: "", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Отлично", style: .default, handler: { action in
-                    self.passwordButton.setTitle("Введите пароль", for: .normal)
-                    self.passwordtextField.text = ""
-                }))
-                self.present(alert, animated: true)
+                self.passwordtextField.text = ""
+                self.passwordButton.setTitle("Повторите пароль", for: .normal)
             } else {
                 let alert = UIAlertController(title: "Некорректный пароль!", message: "Пароль меньше 4 символов", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Исправить", style: .default, handler: { action in
@@ -92,22 +88,26 @@ class LoginViewController: UIViewController {
                 }))
                 self.present(alert, animated: true)
             }
+            
         } else {
-            if passwordButton.currentTitle == "Введите пароль" {
-
+            
+            if passwordButton.currentTitle == "Повторите пароль" {
+                
                 if passwordtextField.text == KeychainSwift().get("userPassword") {
-                    self.passwordButton.setTitle("Повторите пароль", for: .normal)
-                    self.passwordtextField.text = ""
+                    let vc = MainTabBarController()
+                    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                    appDelegate.window?.rootViewController = vc
                 } else {
-                    let alert = UIAlertController(title: "Неверный пароль!", message: "", preferredStyle: .alert)
+                    let alert = UIAlertController(title: "Пароли не совпадают", message: "", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Исправить", style: .default, handler: { action in
                         self.passwordtextField.text = ""
                     }))
                     self.present(alert, animated: true)
                 }
-
             } else {
-                if passwordButton.currentTitle == "Повторите пароль" {
+                
+                if passwordButton.currentTitle == "Введите пароль" {
+                    
                     if passwordtextField.text == KeychainSwift().get("userPassword") {
                         let vc = MainTabBarController()
                         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -115,7 +115,6 @@ class LoginViewController: UIViewController {
                     } else {
                         let alert = UIAlertController(title: "Неверный пароль!", message: "", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Исправить", style: .default, handler: { action in
-                            self.passwordButton.setTitle("Введите пароль", for: .normal)
                             self.passwordtextField.text = ""
                         }))
                         self.present(alert, animated: true)
@@ -124,5 +123,5 @@ class LoginViewController: UIViewController {
             }
         }
     }
-
+    
 }

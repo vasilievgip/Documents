@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import KeychainSwift
 
 
 class SecondViewController: UIViewController {
@@ -79,6 +80,7 @@ class SecondViewController: UIViewController {
 
     @objc
     func tap() {
+        KeychainSwift().clear()
         let vc = LoginViewController()
         present(vc, animated: true)
     }
