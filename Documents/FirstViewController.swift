@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class FirstViewController: UIViewController, UITableViewDelegate {
 
     weak var coordinator: MainFirstCoordinator?
@@ -17,6 +18,8 @@ class FirstViewController: UIViewController, UITableViewDelegate {
         (try? FileManager.default.contentsOfDirectory(atPath: path)) ?? []
     }
 
+    var sortFiles = [String]()
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.toAutoLayout()
@@ -77,8 +80,13 @@ class FirstViewController: UIViewController, UITableViewDelegate {
         layout()
         self.navigationBarButton_1.addTarget(self, action: #selector(createAfolder), for: .touchUpInside)
         self.navigationBarButton_2.addTarget(self, action: #selector(addAphoto), for: .touchUpInside)
-        self.tabBarItem = UITabBarItem(title: "First", image: UIImage(systemName: "circle"), tag: 0)
+        self.tabBarItem = UITabBarItem(title: "Файлы", image: UIImage(systemName: "filemenu.and.selection"), tag: 0)
+        //        sortedFiles()
+    }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        sortedFiles()
     }
 
     @objc
@@ -106,34 +114,46 @@ class FirstViewController: UIViewController, UITableViewDelegate {
         showPicker()
     }
 
+    func sortedFiles() {
+
+        if UserDefaults.standard.bool(forKey: "sort") == true {
+            sortFiles = files.sorted()
+            tableView.reloadData()
+        } else {
+            sortFiles = files
+            tableView.reloadData()
+        }
+
+    }
+
 }
 
 extension FirstViewController: UITableViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        self.files.count
+        self.sortFiles.count
 
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: FirstViewCell.self), for: indexPath) as! FirstViewCell
-        cell.setupCell(model: self.files[indexPath.row])
+        cell.setupCell(model: self.sortFiles[indexPath.row])
         return cell
 
     }
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let fullPath = self.path + "/" + self.files[indexPath.row]
+            let fullPath = self.path + "/" + self.sortFiles[indexPath.row]
             try? FileManager.default.removeItem(atPath: fullPath)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let fullPath = self.path + "/" + self.files[indexPath.row]
+        let fullPath = self.path + "/" + self.sortFiles[indexPath.row]
         var isDir: ObjCBool = false
         if FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDir) {
             if isDir.boolValue == true {
@@ -162,7 +182,7 @@ extension FirstViewController: UITableViewDataSource, UIImagePickerControllerDel
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
 
         if let imgUrl = info[UIImagePickerController.InfoKey.imageURL] as? URL {
-//            dismiss(animated: true)
+
             var imgName = imgUrl.lastPathComponent
 
             let alert = UIAlertController(title: "Введите название файла", message: "", preferredStyle: .alert)
